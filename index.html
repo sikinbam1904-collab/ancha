@@ -194,6 +194,9 @@
         }
         .screen::-webkit-scrollbar { display: none; }
 
+        /* Loading screen: neutral before Firebase/theme data arrives.
+           Keep this completely independent from --theme-* so every theme
+           starts from the same clean white screen and transitions naturally. */
         .data-loading-screen {
             position: absolute;
             inset: 0;
@@ -201,7 +204,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(145deg, #FFF5FB 0%, #FFFFFF 48%, #FFDEF6 100%);
+            background: #FFFFFF !important;
+            color: #3F3F46;
             opacity: 1;
             visibility: visible;
             transition: opacity 0.45s ease, visibility 0.45s ease;
@@ -213,13 +217,7 @@
             pointer-events: none;
         }
         .data-loading-glow {
-            position: absolute;
-            width: 260px;
-            height: 260px;
-            border-radius: 50%;
-            background: var(--theme-border);
-            filter: blur(70px);
-            opacity: 0.65;
+            display: none !important;
         }
         .data-loading-content {
             position: relative;
@@ -233,26 +231,31 @@
             height: 76px;
             margin: 0 auto 16px;
             border-radius: 24px;
-            background: #FFFFFF;
-            border: 1px solid #F8C8DC;
-            box-shadow: 0 10px 28px rgba(var(--theme-shadow-primary-rgb), .15);
+            background: #FFFFFF !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .07) !important;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #D870B8;
+            color: #52525B !important;
             font-size: 28px;
             animation: loadingFloat 2.2s ease-in-out infinite;
         }
-        .data-loading-title { color: #7A6669; font-size: 18px; font-weight: 800; }
-        .data-loading-text { margin-top: 6px; color: #D870B8; font-size: 11px; font-weight: 600; }
+        .data-loading-title { color: #27272A !important; font-size: 18px; font-weight: 800; }
+        .data-loading-text { margin-top: 6px; color: #71717A !important; font-size: 11px; font-weight: 600; }
         .data-loading-spinner {
             width: 28px;
             height: 28px;
             margin: 16px auto 0;
-            border: 3px solid #F8C8DC;
-            border-top-color: #D870B8;
+            border: 3px solid #E5E7EB !important;
+            border-top-color: #71717A !important;
             border-radius: 50%;
             animation: dataSpin 0.9s linear infinite;
+        }
+        .data-loading-dots {
+            margin-top: 8px;
+            color: #A1A1AA !important;
+            letter-spacing: 2px;
         }
         @keyframes dataSpin { to { transform: rotate(360deg); } }
         @keyframes loadingFloat {
@@ -642,6 +645,35 @@
         }
     </style>
 
+    <style id="loadingNeutralOverrides">
+        /* Startup state: keep the whole page neutral until Firebase/theme data is ready. */
+        body.data-loading-active {
+            background: #FFFFFF !important;
+            color: #3F3F46 !important;
+        }
+        body.data-loading-active .device-container {
+            background: #FFFFFF !important;
+            box-shadow: 0 8px 30px rgba(0,0,0,.06) !important;
+        }
+        body.data-loading-active .data-loading-screen {
+            background: #FFFFFF !important;
+        }
+        body.data-loading-active .data-loading-title {
+            color: #27272A !important;
+        }
+        body.data-loading-active .data-loading-text {
+            color: #71717A !important;
+        }
+        body.data-loading-active .data-loading-spinner {
+            border-color: #E5E7EB !important;
+            border-top-color: #71717A !important;
+        }
+        body.data-loading-active .data-loading-dots {
+            color: #A1A1AA !important;
+        }
+        /* Do not let the theme color override the neutral loading text. */
+        .data-loading-text { color: #71717A !important; }
+    </style>
     <style id="adminThemeVariableStyles">
         /* ทุกปุ่มและแท็บของหลังบ้านใช้ตัวแปรธีมเดียวกับหน้าเว็บ */
         #adminPanelModal .modal-content,
@@ -941,7 +973,7 @@
 }
 </style>
 </head>
-<body id="pageBody">
+<body id="pageBody" class="data-loading-active">
 
     <!-- เครื่องเล่นเพลง MP3 -->
     <audio id="bgMusic" loop preload="auto">
@@ -1468,8 +1500,8 @@
                 <div class="data-loading-glow"></div>
                 <div class="data-loading-content">
                     <div class="data-loading-logo"><i class="fas fa-heart"></i></div>
-                    <div class="data-loading-title" id="dataLoadingTitle">Ancha ♡</div>
-                    <div class="data-loading-text" id="dataLoadingText">กำลังดึงข้อมูลร้าน...</div>
+                    <div class="data-loading-title" id="dataLoadingTitle">Loading ♡</div>
+                    <div class="data-loading-text" id="dataLoadingText">กำลังเตรียมหน้าร้าน...</div>
                     <div class="data-loading-spinner"></div>
                     <div class="data-loading-dots">•••</div>
                 </div>
@@ -1497,9 +1529,9 @@
 
             <!-- Cover Image Widget -->
             <div class="horizontal-cover-widget" id="coverWidget">
-                <img src="data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 450"%3E%3Crect width="1200" height="450" fill="%23FFE1F0"/%3E%3Ccircle cx="1080" cy="70" r="250" fill="%23E8F6FF"/%3E%3Ccircle cx="130" cy="390" r="240" fill="%23FFF5FB"/%3E%3Ctext x="600" y="230" text-anchor="middle" font-family="sans-serif" font-size="58" font-weight="bold" fill="%23D870B8"%3EYOUR SHOP%3C/text%3E%3C/svg%3E" 
-                     alt="Cover Image" 
-                     class="cover-bg-image" 
+                <img src=""
+                     alt="Cover Image"
+                     class="cover-bg-image"
                      id="coverImg">
                 <div class="cover-navigation" id="coverNavigation"></div>
             </div>
@@ -1556,7 +1588,7 @@
             badgeText: '♡ ยินดีต้อนรับค่ะ ♡',
             shopTitle: 'ชื่อร้านของคุณ ♡',
             shopDesc: 'ยินดีต้อนรับสู่เว็บไซต์ของร้านค่ะ ♡',
-            coverImg: DEFAULT_COVER_IMAGE,
+            coverImg: '',
             pointsHeaderImg: '',
             queueBannerImg: '',
             pleaseReadTitle: '♡ Please Read 📌',
@@ -1610,7 +1642,7 @@
                 {id:'other', title:'Other', subtitle:'สินค้าอื่น ๆ', sectionTitle:'Other ♡', icon:'⭐'}
             ],
             customization: {
-                browserTitle:'Ancha font ♡', loadingTitle:'Ancha ♡', loadingText:'กำลังดึงข้อมูลร้าน...',
+                browserTitle:'ชื่อร้านของคุณ ♡', loadingTitle:'ชื่อร้านของคุณ ♡', loadingText:'กำลังเตรียมหน้าร้าน...',
                 mainMenu:[
                     {id:'payment',title:'Payment',subtitle:'ช่องทางชำระเงิน',icon:'fas fa-wallet',visible:true},
                     {id:'line',title:'Contact',subtitle:'ช่องทางติดต่อ',icon:'fas fa-address-book',visible:true},
@@ -1696,6 +1728,8 @@
             {id:'contact', title:'รูปโปรไฟล์ Contact', legacy:'contactProfileImg'}
         ];
         let mediaData = [];
+        // รอ Firebase โหลดรูปที่ผู้ใช้บันทึกไว้ก่อน เพื่อไม่ให้รูปตั้งต้นเด้งขึ้นมา
+        let mediaInitialLoaded = false;
         let highlightPhotoDocs = [];
         let productPhotoDocs = [];
         let coverIndex = 0;
@@ -1744,7 +1778,7 @@
         }
 
         async function loadSiteConfigFromFirestore() {
-            updateDataLoadingText('กำลังดึงข้อมูลร้าน...');
+            updateDataLoadingText('กำลังเตรียมหน้าร้าน...');
             if (!db) {
                 siteConfig = JSON.parse(JSON.stringify(defaultConfig));
                 applyConfigToUI();
@@ -1846,6 +1880,8 @@
                     .sort((a,b) => (a.createdAt || 0) - (b.createdAt || 0));
                 productPhotoDocs = entries.filter(item => item.kind === 'productPhoto')
                     .sort((a,b) => (a.createdAt || 0) - (b.createdAt || 0));
+                // ถึงข้อมูลรูปจาก Firebase แล้ว ค่อยอนุญาตให้แสดงรูปปก
+                mediaInitialLoaded = true;
                 renderReviewHighlights();
                 renderAdminHighlights();
                 if (document.getElementById('highlightEditorModal').classList.contains('active')) renderHighlightEditorPhotos();
@@ -1853,7 +1889,11 @@
                 renderHomeCover();
                 refreshVisibleMedia();
                 if (viewedHighlightId && !reviewHighlights.some(item => item.id === viewedHighlightId)) closeHighlightViewer();
-            }, error => console.error('Error fetching review highlights:', error));
+            }, error => {
+                console.error('Error fetching review highlights:', error);
+                mediaInitialLoaded = true;
+                renderHomeCover();
+            });
         }
 
         function mediaSources(section) {
@@ -1864,10 +1904,7 @@
             const original = legacyImage && !isDefaultCover
                 ? [{id:null, image:legacyImage, legacy:setting.legacy}] : [];
             const uploaded = mediaData.filter(item => item.section === section);
-            // The built-in cover is a fallback, not a deletable photo in Firestore.
-            if (section === 'cover' && !original.length && !uploaded.length) {
-                return [{id:null, image:DEFAULT_COVER_IMAGE, isDefault:true}];
-            }
+            // No built-in cover: keep the cover area hidden until a real cover is uploaded/saved.
             return original.concat(uploaded);
         }
         function appendSectionImages(parent, section, alt) {
@@ -1883,17 +1920,30 @@
             return mediaSources(section).map(item => `<img src="${escapeHtml(item.image)}" alt="${escapeHtml(alt)}" class="section-image">`).join('');
         }
         function renderHomeCover() {
-            const sources = mediaSources('cover');
             const widget = document.getElementById('coverWidget');
             const image = document.getElementById('coverImg');
             const controls = document.getElementById('coverNavigation');
             if (!widget || !image || !controls) return;
             const headerCfg=mergeCustomization(siteConfig.customization).header;
+
+            // ห้ามแสดงรูปตั้งต้นระหว่างรอ Firebase เพราะผู้ใช้จะเห็นรูปเก่าก่อน
+            // ถ้ามีรูปปกที่บันทึกไว้ใน site_config จริง สามารถแสดงได้ทันที
+            const legacyCover = siteConfig?.coverImg;
+            const hasRealLegacyCover = !!legacyCover && legacyCover !== DEFAULT_COVER_IMAGE && legacyCover !== PREVIOUS_DEFAULT_COVER_IMAGE;
+            if (!mediaInitialLoaded && !hasRealLegacyCover) {
+                widget.classList.add('hidden');
+                image.removeAttribute('src');
+                controls.replaceChildren();
+                clearInterval(coverTimer);
+                return;
+            }
+
+            const sources = mediaSources('cover');
             widget.classList.toggle('hidden', !sources.length || headerCfg.showCover===false);
             coverIndex = sources.length ? coverIndex % sources.length : 0;
             image.onerror = () => {
-                const themedDefault = createThemeCoverImage(siteConfig.themeColors);
-                if (image.getAttribute('src') !== themedDefault) image.src = themedDefault;
+                image.removeAttribute('src');
+                widget.classList.add('hidden');
             };
             if (sources.length) {
                 const source = sources[coverIndex];
@@ -1975,11 +2025,14 @@
                 for (const file of files) {
                     if (section.png && file.type !== 'image/png' && !/\.png$/i.test(file.name)) throw new Error('สแตมป์ต้องเป็นไฟล์ PNG ค่ะ');
                     button.textContent = `กำลังบันทึก ${uploaded + 1}/${files.length}...`;
-                    const image = section.png ? await resizeStampPng(file)
-                        : section.id === 'qr' ? await compressAndResizeImage(file, 1200, 0.88, 450 * 1024, true)
-                        : section.id === 'contact' ? await compressAndResizeImage(file, 1000, 0.86, 400 * 1024)
-                        : await compressAndResizeImage(file, 1600, 0.86, 550 * 1024);
-                    await db.collection('review_highlights_cakee').add({kind:'siteMedia', section:section.id, image, createdAt:Date.now()});
+                    const uploadedImage = await compressAndUploadImage(file, {
+                        maxDimension: section.png ? 600 : (section.id === 'contact' ? 1000 : section.id === 'qr' ? 1200 : 1600),
+                        quality: section.png ? 0.8 : (section.id === 'qr' ? 0.88 : 0.86),
+                        maxDataUrlBytes: section.png ? 250 * 1024 : (section.id === 'qr' ? 450 * 1024 : (section.id === 'contact' ? 400 * 1024 : 550 * 1024)),
+                        png: !!section.png,
+                        folder: `ancha/${section.id}`
+                    });
+                    await db.collection('review_highlights_cakee').add({kind:'siteMedia', section:section.id, image:uploadedImage.url, cloudinaryPublicId:uploadedImage.publicId, imageHost:'cloudinary', createdAt:Date.now()});
                     uploaded++;
                 }
                 showToast(`เพิ่มภาพ ${uploaded} ภาพแล้วค่ะ`);
@@ -2174,16 +2227,25 @@
             const button = document.getElementById('saveHighlightButton');
             button.disabled = true; button.textContent = 'กำลังบีบอัดและบันทึกภาพ...';
             try {
-                const cover = coverFile ? await compressAndResizeImage(coverFile, 1200, 0.86, 300 * 1024) : existing?.cover || '';
+                const coverUpload = coverFile ? await compressAndUploadImage(coverFile, {maxDimension:1200, quality:0.86, maxDataUrlBytes:300*1024, folder:'ancha/highlights'}) : null;
+                const cover = coverUpload?.url || existing?.cover || '';
                 const preparedPhotos = [];
-                for (const file of newPhotos) preparedPhotos.push(await compressAndResizeImage(file, 1600, 0.88, 650 * 1024));
-                const photos = [...editingHighlightPhotos];
+                for (const file of newPhotos) {
+                    const uploaded = await compressAndUploadImage(file, {maxDimension:1600, quality:0.88, maxDataUrlBytes:650*1024, folder:'ancha/highlights'});
+                    preparedPhotos.push(uploaded);
+                }
+                const photos = [];
+                for (const photo of editingHighlightPhotos) {
+                    if (String(photo || '').startsWith('data:image/')) {
+                        const uploaded = await migrateBase64ImageToCloudinary(photo, 'ancha/highlights');
+                        photos.push(uploaded?.url || photo);
+                    } else photos.push(photo);
+                }
                 const payload = {title, cover, photos, createdAt: existing?.createdAt || Date.now(), updatedAt: Date.now()};
-                if (JSON.stringify(payload).length > 900 * 1024) throw new Error('ภาพรวมใหญ่เกินไป กรุณาลดจำนวนภาพค่ะ');
                 const ref = editingHighlightId ? db.collection('review_highlights_cakee').doc(editingHighlightId) : db.collection('review_highlights_cakee').doc();
                 await ref.set(payload);
-                for (const image of preparedPhotos) {
-                    await db.collection('review_highlights_cakee').add({kind:'highlightPhoto', highlightId:ref.id, image, createdAt:Date.now()});
+                for (const uploaded of preparedPhotos) {
+                    await db.collection('review_highlights_cakee').add({kind:'highlightPhoto', highlightId:ref.id, image:uploaded.url, cloudinaryPublicId:uploaded.publicId, imageHost:'cloudinary', createdAt:Date.now()});
                 }
                 closeHighlightEditor();
                 showToast('บันทึกไฮไลท์แล้วค่ะ ✨');
@@ -2319,6 +2381,8 @@
             if (!screen) return;
             setTimeout(() => {
                 screen.classList.add('hide');
+                const pageBody = document.getElementById('pageBody');
+                if (pageBody) pageBody.classList.remove('data-loading-active');
                 setTimeout(() => screen.remove(), 500);
             }, 250);
         }
@@ -3036,6 +3100,40 @@
         }
 
         // Keep data URLs small enough for Firestore. PNG mode preserves transparent stamps.
+        // Cloudinary: image files are uploaded here; Firestore stores only the returned URL.
+        // Do NOT put an API secret in this HTML. Unsigned uploads use only the cloud name + preset.
+        const CLOUDINARY_CLOUD_NAME = 'tbjq4ewb';
+        const CLOUDINARY_UPLOAD_PRESET = 'ancha_upload';
+        const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`;
+
+        async function uploadImageToCloudinary(fileOrDataUrl, folder='ancha') {
+            if (!fileOrDataUrl) return '';
+            const form = new FormData();
+            form.append('file', fileOrDataUrl);
+            form.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+            if (folder) form.append('folder', folder);
+            const response = await fetch(CLOUDINARY_UPLOAD_URL, {method:'POST', body:form});
+            let data = null;
+            try { data = await response.json(); } catch (_) {}
+            if (!response.ok || !data?.secure_url) {
+                const message = data?.error?.message || `Cloudinary upload failed (${response.status})`;
+                throw new Error(message);
+            }
+            return { url:data.secure_url, publicId:data.public_id || '' };
+        }
+
+        async function compressAndUploadImage(file, options={}) {
+            const {
+                maxDimension=1600,
+                quality=0.86,
+                maxDataUrlBytes=550*1024,
+                png=false,
+                folder='ancha'
+            } = options;
+            const dataUrl = await compressAndResizeImage(file, maxDimension, quality, maxDataUrlBytes, png);
+            return uploadImageToCloudinary(dataUrl, folder);
+        }
+
         function compressAndResizeImage(file, maxDimension = 700, quality = 0.6, maxDataUrlBytes = 72 * 1024, png = false) {
             return new Promise((resolve, reject) => {
                 if (!file) return resolve(null);
@@ -3097,10 +3195,11 @@
             submitIcon.className = 'fas fa-spinner fa-spin';
             submitText.textContent = 'กำลังส่งข้อมูล...';
 
-            let evidenceBase64 = null;
+            let evidenceUrl = null;
             if (fileInput.files.length > 0) {
                 try {
-                    evidenceBase64 = await compressAndResizeImage(fileInput.files[0], 1400, 0.85, 500 * 1024);
+                    const uploaded = await compressAndUploadImage(fileInput.files[0], {maxDimension:1400, quality:0.85, maxDataUrlBytes:500*1024, folder:'ancha/reviews'});
+                    evidenceUrl = uploaded.url;
                 } catch (error) {
                     showToast(error.message || 'บีบอัดภาพไม่สำเร็จค่ะ', 'fa-exclamation-circle');
                     submitBtn.disabled = false;
@@ -3115,7 +3214,7 @@
             const dateStr = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
             const newReviewData = {
-                name, channel, comment, rating: currentRating, date: dateStr, evidence: evidenceBase64,
+                name, channel, comment, rating: currentRating, date: dateStr, evidence: evidenceUrl,
                 timestamp: db ? firebase.firestore.FieldValue.serverTimestamp() : new Date() 
             };
 
@@ -4137,7 +4236,7 @@
             try {
                 const preparedPhotos = [];
                 for (const file of files) {
-                    preparedPhotos.push(await compressAndResizeImage(file, 1600, 0.88, 700 * 1024));
+                    preparedPhotos.push(await compressAndUploadImage(file, {maxDimension:1600, quality:0.88, maxDataUrlBytes:700*1024, folder:'ancha/products'}));
                 }
                 const payload = {
                     category, subcategory, title, priceBaht: numericPrice > 0 ? Math.round(numericPrice * 100) / 100 : 0,
@@ -4152,8 +4251,8 @@
                 if (payload.deliveryType === 'code' && !productCodeInventoryReady) throw new Error('กรุณารอโหลดสต็อกสินค้าก่อนบันทึกค่ะ');
                 await saveProductDelivery(ref.id, payload.deliveryType);
                 if (payload.deliveryType !== 'code') payload.stockCount = null;
-                for (const image of preparedPhotos) {
-                    await db.collection('review_highlights_cakee').add({kind:'productPhoto',productId:ref.id,image,createdAt:Date.now()});
+                for (const uploaded of preparedPhotos) {
+                    await db.collection('review_highlights_cakee').add({kind:'productPhoto',productId:ref.id,image:uploaded.url,cloudinaryPublicId:uploaded.publicId,imageHost:'cloudinary',createdAt:Date.now()});
                 }
                 await ref.set(payload,{merge:true});
                 for (const photoId of pendingProductPhotoDeletes) await db.collection('review_highlights_cakee').doc(photoId).delete();
@@ -4592,14 +4691,14 @@
             const file=input.files?.[0];if(!file) return showToast('กรุณาเลือกภาพสลิปค่ะ');
             button.disabled=true;
             try {
-                const image=await compressAndResizeImage(file,1600,0.88,650*1024);
-                if(image.length>700*1024) throw new Error('ภาพสลิปใหญ่เกินไป');
+                const uploaded=await compressAndUploadImage(file,{maxDimension:1600,quality:0.88,maxDataUrlBytes:650*1024,folder:'ancha/slips'});
+                const image=uploaded.url;
                 // Keep the slip and its order status in one atomic write. A denied
                 // status update must not leave a slip behind with an old status.
                 const orderRef=db.collection('orders_cakee').doc(token);
                 const slipRef=db.collection('order_slips_cakee').doc(token);
                 const batch=db.batch();
-                batch.set(slipRef,{image,submittedAt:firebase.firestore.FieldValue.serverTimestamp()});
+                batch.set(slipRef,{image,cloudinaryPublicId:uploaded.publicId,imageHost:'cloudinary',submittedAt:firebase.firestore.FieldValue.serverTimestamp()});
                 batch.update(orderRef,{status:'submitted'});
                 await batch.commit();
                 showToast('ส่งสลิปแล้วค่ะ รอแอดมินตรวจสอบ');await lookupGuestOrder();
@@ -4691,21 +4790,24 @@
                 const reader=new FileReader();reader.onload=()=>resolve(String(reader.result));reader.onerror=()=>reject(new Error('อ่านไฟล์ไม่สำเร็จ'));reader.readAsDataURL(file);
             });
         }
-        function readDeliveryFile(file) {
-            return file.type.startsWith('image/')
-                ? compressAndResizeImage(file,1600,0.86,400*1024)
-                : readSmallFile(file);
+        async function readDeliveryFile(file) {
+            if (file.type.startsWith('image/')) {
+                const uploaded = await compressAndUploadImage(file,{maxDimension:1600,quality:0.86,maxDataUrlBytes:400*1024,folder:'ancha/deliveries'});
+                return {fileData:uploaded.url, cloudinaryPublicId:uploaded.publicId, imageHost:'cloudinary'};
+            }
+            return {fileData:await readSmallFile(file), cloudinaryPublicId:'', imageHost:'inline'};
         }
         async function saveProductDelivery(id,type) {
             const ref=db.collection('product_delivery_cakee').doc(id);
             if(type==='custom') return;
             if(type==='file') {
                 const file=document.getElementById('productDeliveryFile').files?.[0];
-                const data=file?await readDeliveryFile(file):'';
+                const delivery=file?await readDeliveryFile(file):null;
+                const data=delivery?.fileData||'';
                 await db.runTransaction(async tx=>{
                     const snap=await tx.get(ref), current=snap.data()||{};
                     if(!data&&!current.fileData)throw new Error('กรุณาเลือกไฟล์สินค้าก่อนบันทึกค่ะ');
-                    tx.set(ref,{type:'file',fileData:data||current.fileData,fileName:file?.name||current.fileName||'สินค้า'},{merge:true});
+                    tx.set(ref,{type:'file',fileData:data||current.fileData,cloudinaryPublicId:delivery?.cloudinaryPublicId||current.cloudinaryPublicId||'',imageHost:delivery?.imageHost||current.imageHost||'',fileName:file?.name||current.fileName||'สินค้า'},{merge:true});
                 });
             } else if(type==='code') {
                 if (!productCodeInventoryReady) throw new Error('กรุณารอโหลดสต็อกสินค้าก่อนบันทึกค่ะ');
@@ -4891,8 +4993,8 @@
             if(!text&&!file)return showToast('กรุณาใส่ข้อความหรือเลือกไฟล์ค่ะ');
             button.disabled=true;
             try {
-                const data=file?await readDeliveryFile(file):'';
-                await db.collection('orders_cakee').doc(id).collection('deliveries').doc(productId).set({text,fileData:data,fileName:file?.name||'',deliveredAt:firebase.firestore.FieldValue.serverTimestamp()});
+                const delivery=file?await readDeliveryFile(file):null;
+                await db.collection('orders_cakee').doc(id).collection('deliveries').doc(productId).set({text,fileData:delivery?.fileData||'',cloudinaryPublicId:delivery?.cloudinaryPublicId||'',imageHost:delivery?.imageHost||'',fileName:file?.name||'',deliveredAt:firebase.firestore.FieldValue.serverTimestamp()});
                 showToast('ส่งงานแล้วค่ะ');input.value='';fileInput.value='';
             } catch(error){console.error(error);showToast(error.message||'ส่งงานไม่สำเร็จ');}
             finally {button.disabled=false;}
@@ -4901,10 +5003,10 @@
         window.onload = async () => {
             updateClock();
             try {
-                updateDataLoadingText('กำลังเชื่อมต่อฐานข้อมูล...');
+                updateDataLoadingText('กำลังเตรียมหน้าร้าน...');
                 await loadSiteConfigFromFirestore();
 
-                updateDataLoadingText('กำลังเตรียมข้อมูลร้าน...');
+                updateDataLoadingText('กำลังโหลดข้อมูล...');
                 initFirebaseReviews();
                 initFirebaseReviewHighlights();
                 initFirebaseQueues();
